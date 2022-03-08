@@ -114,11 +114,9 @@ class Enigma:
         # Encode/decode the message.
         cipher = ''
         for char in message:
-            print(f'Character is {char}.')
             # First run through patch board.
             if char in self.patches.keys():
                 char = self.patches[char]
-            print(f'Patched is {char}.')
 
             # Next run through the wheels in the first direction.
             rotate_next = False
@@ -129,18 +127,18 @@ class Enigma:
                 else:
                     # Check for rotating later wheels.
                     char, rotate_next = wheel(char, rotate_next)
-                print(f'After wheel {i}, it is {char}.')
 
             # Run the message through the reflector.
             char = self.reflector[char]
-            print(f'Reflected is {char}.')
 
             # Run the message through the wheels the other way. No rotating.
             for wheel in self.wheels[::-1]:
                 char, _ = wheel(char, reverse=True)
-                print(f'Reflected after next wheel, it is {char}.')
+            
+            # Run back through the patch board.
+            if char in self.patches.keys():
+                char = self.patches[char]
             cipher += char
-            print(f'Cipher is {cipher}.\n')
 
         return cipher
 
@@ -170,7 +168,6 @@ class Enigma:
                 patches go both ways.
         """
 
-        # TODO (NLT): get the patch board working.
         patch_a, patch_b = patch_lists
         patch_a_final = patch_a.upper() + patch_b.upper()
         patch_b_final = patch_b.upper() + patch_a.upper()
