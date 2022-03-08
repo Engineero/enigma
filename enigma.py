@@ -170,6 +170,7 @@ class Enigma:
                 patches go both ways.
         """
 
+        # TODO (NLT): get the patch board working.
         patch_a, patch_b = patch_lists
         patch_a_final = patch_a.upper() + patch_b.upper()
         patch_b_final = patch_b.upper() + patch_a.upper()
@@ -182,6 +183,7 @@ class Enigma:
         decrypt it's own messages.
         """
 
+        # TODO (NLT): set up a reflector based on real Enigma machines.
         reflector_a = 'ABCDEFGHIJKLM'
         reflector_b = 'NOPQRSTUVWXYZ'
         refl_a_final = reflector_a.upper() + reflector_b.upper()
