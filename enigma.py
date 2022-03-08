@@ -76,7 +76,13 @@ class Wheel:
         """Sets the offset to a specific value."""
 
         self.output = self.initial_output[offset:] + self.initial_output[:offset]
+        self.initial_offset = offset
         self.offset = offset
+
+    def reset(self):
+        """Resets wheel to starting configuration."""
+
+        self.set_offset(self.initial_offset)
 
 class Enigma:
     """Defines the enigma machine."""
@@ -158,6 +164,10 @@ class Enigma:
         # Set the wheels up for the message.
         for wheel, offset in zip(self.wheels, offsets):
             wheel.set_offset(offset)
+
+    def reset(self):
+        for wheel in self.wheels:
+            wheel.reset()
 
     def init_patch_board(self, patch_lists):
         """Initialize patch board settings.
