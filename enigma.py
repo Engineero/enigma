@@ -13,10 +13,9 @@
 import string
 
 
-class Enigma:
-    """Defines the enigma machine."""
+class Wheel:
+    """Defines a cipher wheel for the enigma machine."""
 
-    # Define constants for the machine.
     WHEELS = {'I': 'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
               'II': 'AJDKSIRUXBLHWTMCQGZNPYFVOE',
               'III': 'BDFHJLCPRTXVZNYEIWGAKMUSQO',
@@ -34,12 +33,68 @@ class Enigma:
                'VII': [12, 25],
                'VIII': [12, 25]}
 
-    def __init__(self, wheels, ring_settings, patch_lists):
+    def __init__(self, wheel_key, ring_setting=0, offset=0):
+        self.wheel_key = wheel_key
+        self.output = self.WHEELS[wheel_key]
+        self.notch = self.NOTCHES[wheel_key]
+        self.ring_setting = ring_setting
+        self.initial_offset = offset
+        self.offset = 0
+        self.shift_wheel(ring_setting)
+        self.initial_output = self.output  # store in case we need it
+        self.offset = 0  # reset the offset counter
+        self.shift_wheel(offset)
+
+    def __call__(self, input, rotate=False):
+        """Runs the character through the wheel."""
+
+        shift_next = False
+        if rotate:
+            self.shift_wheel()
+            if self.offset in self.notch:
+                shift_next = True
+            if self.offset > 25:
+                self.offset = 0  # reset at Z
+        if isinstance(input, str):
+            index = string.ascii_uppercase.index(input.upper())
+        elif isinstance(input, int):
+            index = input
+        else:
+            index = int(input)
+        return self.output[index], shift_next
+
+    def __repr__(self):
+        return self.output
+
+    def shift_wheel(self, shift=1):
+        """Shifts the wheel by the shift value."""
+
+        self.output = self.output[shift:] + self.output[:shift]
+        self.offset += shift
+
+    def set_offset(self, offset):
+        """Sets the offset to a specific value."""
+
+        self.output = self.initial_output[offset:] + self.initial_output[:offset]
+        self.offset = offset
+
+class Enigma:
+    """Defines the enigma machine."""
+
+    # Define constants for the machine.
+
+    def __init__(self, wheels, ring_settings, patch_lists, offsets=None):
         """Initializes the machine."""
 
-        init_wheels(wheels, ring_settings)
-        init_patch_board(patch_lists)
-        init_reflector()
+        self.wheel_choices = wheels
+        self.ring_settings = ring_settings
+        self.init_patch_board(patch_lists)
+        self.init_reflector()
+        if offsets is None:
+            offsets = [0] * len(wheels)
+        self.wheels = []
+        for wheel, ring, offset in zip(wheels, ring_settings, offsets):
+            self.wheels.append(Wheel(wheel, ring, offset))
 
     def __call__(self, message: str, offsets: list = None):
         """Calls the machine on the provided message and returns the result.
@@ -62,58 +117,41 @@ class Enigma:
         message = message.upper()
         message = ''.join(message.split())
 
-        # Run through patch board.
-        patched = ''
-        for char in message:
-            if char in self.patches.keys():
-                char = self.patches[char]
-            patched += char
-
         # Set the wheels up for the message, if a setting is specified.
         if offsets is not None:
             self.set_offsets(offsets)
 
-        # Run the message through the wheels, first direction.
-        wheels_forward = ''
-        for char in patched:
-            rotate_next = False
-            for i in range(len(self.wheels)):
+        # Encode/decode the message.
+        final_message = ''
+        for char in message:
+            # First run through patch board.
+            if char in self.patches.keys():
+                char = self.patches[char]
+
+            # Next run through the wheels in the first direction.
+            for i, wheel in enumerate(self.wheels):
                 if i == 0:
                     # Always rotate first wheel.
-                    self.message_wheels[i] = self._shift_wheel(self.message_wheels[i])
-                    offsets[i] += 1
+                    char, rotate_next = wheel(char, rotate=True)
                 else:
                     # Check for rotating later wheels.
-                    if rotate_next:
-                        self.message_wheels[i] = self._shift_wheel(self.message_wheels[i])
-                        offsets[i] += 1
-                        rotate_next = False
-                if offsets[i] > 25:
-                    offsets[i] = 0  # wrap at Z
-                if offsets[i] is in self.notches[i]:
-                    rotate_next = True
-                index = string.ascii_lowercase.index(char.lower())
-                char = self.message_wheels[i][index]
-            wheels_forward += char
+                    char, rotate_next = wheel(char, rotate_next)
 
-        # Run the message through the reflector.
-        reflected = ''
-        for char in wheels_forward:
-            reflected += self.reflector[char]
+            # Run the message through the reflector.
+            char = self.reflector[char]
 
-        # Run the message through the wheels the other way. No rotating.
-        final_message = ''
-        for char in reflected:
+            # Run the message through the wheels the other way. No rotating.
             for i in range(len(self.wheels)):
-                index = string.ascii_lowercase.index(char.lower())
-                char = self.message_wheels[-1 - i][index]  # reverse order
+                char, _ = self.wheels[-1 - i](char)
             final_message += char
 
         return final_message
 
-    def _shift_wheel(self, wheel, shift=1)
-        """Shifts the input wheel by the shift value and returns."""
-        return wheel[shift:] + wheel[:shift]
+    def __repr__(self):
+        result = f'Message wheels: {self.wheels}\n'
+        result += f'Reflector: {self.reflector}\n'
+        result += f'Patch board: {self.patches}\n'
+        return result
 
     def set_offsets(self, offsets: list):
         """Sets the message offsets for the cipher wheels.
@@ -123,11 +161,8 @@ class Enigma:
         """
 
         # Set the wheels up for the message.
-        self.offsets = offsets
-        message_wheels = []
-        for i, offset in enumerate(offsets):
-            message_wheels[i] = self._shift_wheel(self.wheels[i], offset)
-        self.message_wheels = message_wheels
+        for wheel, offset in zip(self.wheels, offsets):
+            wheel.set_offset(offset)
 
     def init_patch_board(self, patch_lists):
         """Initialize patch board settings.
@@ -139,25 +174,9 @@ class Enigma:
         """
 
         patch_a, patch_b = patch_lists
-        patch_a_final = patch_a.extend(patch_b)
-        patch_b_final = patch_b.extend(patch_a)
-        self.patches = {a: b for a, b in patch_a_final, patch_b_final}
-
-    def init_wheels(self, wheels, ring_settings):
-        """Initialize rotor wheels.
-
-        Choose the selected wheels in the selected order, then shift them by
-        ring setting.
-
-        Args:
-            wheels: list of keys for the wheels, roman numerals I-VIII.
-            ring_settings: list of offsets for rings, integers 0-25.
-        """
-
-        self.wheels = [WHEELS[wheel] for wheel in wheels]
-        self.notches = [NOTCHES[wheel] for wheel in wheels]
-        for i, ring in enumerate(ring_settings):
-            self.wheels[i] = self._shift_wheel(self.wheels[i], ring)
+        patch_a_final = patch_a.upper() + patch_b.upper()
+        patch_b_final = patch_b.upper() + patch_a.upper()
+        self.patches = {a: b for a, b in zip(patch_a_final, patch_b_final)}
 
     def init_reflector(self):
         """Initialize reflector.
@@ -168,8 +187,8 @@ class Enigma:
 
         reflector_a = 'ABCDEFGHIJKLM'
         reflector_b = 'NOPQRSTUVWXYZ'
-        refl_a_final = reflector_a.extend(reflector_b)
-        refl_b_final = reflector_b.extend(reflector_a)
+        refl_a_final = reflector_a.upper() + reflector_b.upper()
+        refl_b_final = reflector_b.upper() + reflector_a.upper()
         self.reflector = {a: b for a, b in zip(refl_a_final, refl_b_final)}
 
 
