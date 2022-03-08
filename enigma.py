@@ -45,7 +45,7 @@ class Wheel:
         self.offset = 0  # reset the offset counter
         self.shift_wheel(offset)
 
-    def __call__(self, input, rotate=False):
+    def __call__(self, input, rotate=False, reverse=False):
         """Runs the character through the wheel."""
 
         shift_next = False
@@ -55,13 +55,13 @@ class Wheel:
                 shift_next = True
             if self.offset > 25:
                 self.offset = 0  # reset at Z
-        if isinstance(input, str):
-            index = string.ascii_uppercase.index(input.upper())
-        elif isinstance(input, int):
-            index = input
+        if reverse:
+            index = self.output.find(input.upper())
+            result = string.ascii_uppercase[index]
         else:
-            index = int(input)
-        return self.output[index], shift_next
+            index = string.ascii_uppercase.index(input.upper())
+            result = self.output[index]
+        return result, shift_next
 
     def __repr__(self):
         return self.output
@@ -96,7 +96,7 @@ class Enigma:
         for wheel, ring, offset in zip(wheels, ring_settings, offsets):
             self.wheels.append(Wheel(wheel, ring, offset))
 
-    def __call__(self, message: str, offsets: list = None):
+    def __call__(self, message: str):
         """Calls the machine on the provided message and returns the result.
 
         Removes spaces and capitalizes everything before operating.
@@ -104,31 +104,24 @@ class Enigma:
         Args:
             message: string to encrypt/decrypt.
 
-        Keyword Args:
-            offsets: list of three offsets for the message wheels, each a
-                number from 0-25. If None, leaves wheels as-is. Can also be
-                set by calling set_offsets directly.
-
         Returns:
             message after running through the machine with provided settings.
         """
 
         # Convert to upper case and remove all white space.
-        message = message.upper()
-        message = ''.join(message.split())
-
-        # Set the wheels up for the message, if a setting is specified.
-        if offsets is not None:
-            self.set_offsets(offsets)
+        message = ''.join(message.upper().split())
 
         # Encode/decode the message.
-        final_message = ''
+        cipher = ''
         for char in message:
+            print(f'Character is {char}.')
             # First run through patch board.
             if char in self.patches.keys():
                 char = self.patches[char]
+            print(f'Patched is {char}.')
 
             # Next run through the wheels in the first direction.
+            rotate_next = False
             for i, wheel in enumerate(self.wheels):
                 if i == 0:
                     # Always rotate first wheel.
@@ -136,16 +129,20 @@ class Enigma:
                 else:
                     # Check for rotating later wheels.
                     char, rotate_next = wheel(char, rotate_next)
+                print(f'After wheel {i}, it is {char}.')
 
             # Run the message through the reflector.
             char = self.reflector[char]
+            print(f'Reflected is {char}.')
 
             # Run the message through the wheels the other way. No rotating.
-            for i in range(len(self.wheels)):
-                char, _ = self.wheels[-1 - i](char)
-            final_message += char
+            for wheel in self.wheels[::-1]:
+                char, _ = wheel(char, reverse=True)
+                print(f'Reflected after next wheel, it is {char}.')
+            cipher += char
+            print(f'Cipher is {cipher}.\n')
 
-        return final_message
+        return cipher
 
     def __repr__(self):
         result = f'Message wheels: {self.wheels}\n'
