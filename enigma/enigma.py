@@ -11,6 +11,7 @@
 
 
 import string
+import argparse
 
 
 class Wheel:
@@ -89,12 +90,12 @@ class Enigma:
 
     # Define constants for the machine.
 
-    def __init__(self, wheels, ring_settings, patch_lists, offsets=None):
+    def __init__(self, wheels, ring_settings, patch_list, offsets=None):
         """Initializes the machine."""
 
         self.wheel_choices = wheels
         self.ring_settings = ring_settings
-        self.init_patch_board(patch_lists)
+        self.init_patch_board(patch_list)
         self.init_reflector()
         if offsets is None:
             offsets = [0] * len(wheels)
@@ -178,10 +179,10 @@ class Enigma:
                 patches go both ways.
         """
 
-        patch_a, patch_b = patch_lists
-        patch_a_final = patch_a.upper() + patch_b.upper()
-        patch_b_final = patch_b.upper() + patch_a.upper()
-        self.patches = {a: b for a, b in zip(patch_a_final, patch_b_final)}
+        self.patches = {}
+        for patch in patch_lists:
+            self.patches[patch[0].upper()] = patch[1].upper()
+            self.patches[patch[1].upper()] = patch[0].upper()
 
     def init_reflector(self):
         """Initialize reflector.
@@ -196,6 +197,31 @@ class Enigma:
         refl_a_final = reflector_a.upper() + reflector_b.upper()
         refl_b_final = reflector_b.upper() + reflector_a.upper()
         self.reflector = {a: b for a, b in zip(refl_a_final, refl_b_final)}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Enigma machine.')
+
+    parser.add_argument('message', type=str,
+                        help='Message to be run through the machine.')
+    parser.add_argument('-w', '--wheels', nargs='+', type=str,
+                        default=['I', 'II', 'III'],
+                        help='List of wheels, in order, to be used in machine. Roman numerals I-VIII.')
+    parser.add_argument('-r', '--rings', nargs='+', type=int,
+                        default=[0, 0, 0],
+                        help='Ring offset settings for wheels in machine. Integers 0-25.')
+    parser.add_argument('-o', '--offsets', nargs='+', type=int,
+                        default=[0, 0, 0],
+                        help='Message offset settings for wheels in machine. Integers 0-25.')
+    parser.add_argument('-p', '--patches', nargs='+', type=str,
+                        default=['aa'],
+                        help='Letter pairs to patch together. Default is "aa" or no patches.')
+
+    # Run the machine on the message and return the cipher.
+    args = parser.parse_args()
+    enigma = Enigma(args.wheels, args.rings, args.patches, args.offsets)
+    cipher = enigma(args.message)
+    print(f'Encrypted message:\n{cipher}')
 
 
 #*******************************************************************************
