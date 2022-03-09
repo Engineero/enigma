@@ -63,7 +63,7 @@ dramatically different points to a weakness of the Enigma machine that allowed
 it to be broken: similar machine settings produce similar results, and as
 machine settings approach the settings used to generate a cipher, the decoded
 text becomes more and more realistic (i.e., English or German or whatever was
-encoded)
+encoded).
 
 To decode the message using the same object, first you must reset it to its
 initialized settings, then pass the cipher text through the machine to get
