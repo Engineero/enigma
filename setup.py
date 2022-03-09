@@ -28,22 +28,25 @@ with open(path.join(here, 'README.md')) as a_file:
     long_description = a_file.read()
 
 # TODO: update classifiers
-CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
+CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Environment :: Console',
+               'Intended Audience :: Education',
                'License :: OSI Approved :: MIT License',
                'Natural Language :: English',
                'Operating System :: OS Independent',
                'Programming Language :: Python',
+               'Programming Language :: Python :: 3',
+               'Topic :: Education',
                'Topic :: Scientific/Engineering',
-               'Topic :: Utilities']
-PROJECT_URLS = {'Documentation': 'https://engineero.github.io/enigma',
+               'Topic :: Security :: Cryptography']
+PROJECT_URLS = {'Documentation': 'https://github.com/Engineero/enigma',
                 'Source': 'https://github.com/Engineero/enigma',
                 'Tracker': 'https://github.com/Engineero/enigma/issues'}
 
 setup(name='enigma',
       packages=['enigma'],
       version=version_dict['__version__'],
-      description='An implementation of the WWII Enigma Machine.',
+      description='An implementation of a WWII Enigma Machine.',
       long_description=long_description,
       long_description_content_type='text/markdown',
       author='Engineero',
