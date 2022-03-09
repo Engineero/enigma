@@ -178,10 +178,10 @@ class Enigma:
                 patches go both ways.
         """
 
-        patch_a, patch_b = patch_lists
-        patch_a_final = patch_a.upper() + patch_b.upper()
-        patch_b_final = patch_b.upper() + patch_a.upper()
-        self.patches = {a: b for a, b in zip(patch_a_final, patch_b_final)}
+        self.patches = {}
+        for patch in patch_lists:
+            self.patches[patch[0].upper()] = patch[1].upper()
+            self.patches[patch[1].upper()] = patch[0].upper()
 
     def init_reflector(self):
         """Initialize reflector.
