@@ -90,12 +90,12 @@ class Enigma:
 
     # Define constants for the machine.
 
-    def __init__(self, wheels, ring_settings, patch_lists, offsets=None):
+    def __init__(self, wheels, ring_settings, patch_list, offsets=None):
         """Initializes the machine."""
 
         self.wheel_choices = wheels
         self.ring_settings = ring_settings
-        self.init_patch_board(patch_lists)
+        self.init_patch_board(patch_list)
         self.init_reflector()
         if offsets is None:
             offsets = [0] * len(wheels)
