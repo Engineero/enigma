@@ -11,6 +11,7 @@
 
 
 import string
+import argparse
 
 
 class Wheel:
@@ -196,6 +197,31 @@ class Enigma:
         refl_a_final = reflector_a.upper() + reflector_b.upper()
         refl_b_final = reflector_b.upper() + reflector_a.upper()
         self.reflector = {a: b for a, b in zip(refl_a_final, refl_b_final)}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Enigma machine.')
+
+    parser.add_argument('message', type=str,
+                        help='Message to be run through the machine.')
+    parser.add_argument('-w', '--wheels', nargs='+', type=str,
+                        default=['I', 'II', 'III'],
+                        help='List of wheels, in order, to be used in machine. Roman numerals I-VIII.')
+    parser.add_argument('-r', '--rings', nargs='+', type=int,
+                        default=[0, 0, 0],
+                        help='Ring offset settings for wheels in machine. Integers 0-25.')
+    parser.add_argument('-o', '--offsets', nargs='+', type=int,
+                        default=[0, 0, 0],
+                        help='Message offset settings for wheels in machine. Integers 0-25.')
+    parser.add_argument('-p', '--patches', nargs='+', type=str,
+                        default=['aa'],
+                        help='Letter pairs to patch together. Default is "aa" or no patches.')
+
+    # Run the machine on the message and return the cipher.
+    args = parser.parse_args()
+    enigma = Enigma(args.wheels, args.rings, args.patches, args.offsets)
+    cipher = enigma(args.message)
+    print(f'Encrypted message:\n{cipher}')
 
 
 #*******************************************************************************
