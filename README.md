@@ -1,9 +1,9 @@
 # enigma
-
 A simulated Enigma machine based on the 1942 M3 and M4 Naval Enigma with eight
 wheels to choose from.
 
 ## Installation
+To install, clone the GitHub repo and pip install. A pip package is forthcoming.
 
 ```bash
 $ git clone git@github.com:Engineero/enigma.git
@@ -11,8 +11,7 @@ $ cd enigma
 $ pip install .
 ```
 
-## Use
-
+## Terminal Use
 To use from the command line, change directory to `enigma/enigma/` and see
 
 ```bash
@@ -27,8 +26,15 @@ $ python enigma.py "my message"
 NUDVZWUFF
 ```
 
-to see the encrypted text.
+to see the encrypted text. To decrypt the cipher text, use the same settings
+(in this case default):
 
+```bash
+$ python enigma.py NUDVZWUFF
+MYMESSAGE
+```
+
+# Use in Code
 For use in code, import the `Enigma` class and initialize it with wheels,
 ring offsets, message offsets, and patch board settings (details below).
 
@@ -59,8 +65,18 @@ machine settings approach the settings used to generate a cipher, the decoded
 text becomes more and more realistic (i.e., English or German or whatever was
 encoded)
 
-# Background
+To decode the message using the same object, first you must reset it to its
+initialized settings, then pass the cipher text through the machine to get
+the decoded message:
 
+```python
+my_enigma.reset()
+message = my_enigma(cipher)
+print(message)
+# MYMESSAGE
+```
+
+# Background
 Not a history lesson, but the Enigma machine was a mechnical cipher used by
 the Germans in World War II to secure messages. The cipher had some weaknesses,
 and was ultimately cracked by the Allies, although doing so required some
