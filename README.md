@@ -34,7 +34,7 @@ $ python enigma.py NUDVZWUFF
 MYMESSAGE
 ```
 
-# Use in Code
+## Use in Code
 For use in code, import the `Enigma` class and initialize it with wheels,
 ring offsets, message offsets, and patch board settings (details below).
 
@@ -76,7 +76,7 @@ print(message)
 # MYMESSAGE
 ```
 
-# Background
+## Background
 Not a history lesson, but the Enigma machine was a mechnical cipher used by
 the Germans in World War II to secure messages. The cipher had some weaknesses,
 and was ultimately cracked by the Allies, although doing so required some
