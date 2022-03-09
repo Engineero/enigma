@@ -36,7 +36,7 @@ class TestEnigma(unittest.TestCase):
         print(f'Testing {num_machines} random Enigma machines...')
         for _ in tqdm(range(num_machines)):  # test random enigma machines
             # Set up the machine randomly with a random message.
-            message = np.random.choice(list(self.alphabet), size=100, replace=True)
+            message = np.random.choice(list(self.alphabet), size=1000, replace=True)
             message = ''.join(message).upper()
             wheels = np.random.choice(self.enigma_nums, size=3, replace=False)
             rings = np.random.randint(0, 25, size=(3,))
