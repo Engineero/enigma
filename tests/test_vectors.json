@@ -1,0 +1,46 @@
+{
+    "source": "https://gist.github.com/Jither/d8dbc4d38998c18686bb646b49b9a8a6",
+    "note": "Ring settings and offsets are zero-indexed here.",
+    "vectors": [
+        {
+            "rotors": ["II", "I", "III"],
+            "reflector": "A",
+            "ring_settings": [23, 12, 21],
+            "offsets": [0, 1, 11],
+            "plugs": ["AM", "FI", "NV", "PS", "TU", "WZ"],
+            "cipher": "GCDSE AHUGW TQGRK VLFGX UCALX VYMIG MMNMF DXTGN VHVRM MEVOU YFZSL RHDRR XFJWC FHUHM UNZEF RDISI KBGPM YVXUZ",
+            "message": "FEIND LIQEI NFANT ERIEK OLONN EBEOB AQTET XANFA NGSUE DAUSG ANGBA ERWAL DEXEN DEDRE IKMOS TWAER TSNEU STADT",
+            "note": "Enigma Instruction Manual example, 1930"
+        },
+        {
+            "rotors": ["II", "IV", "V"],
+            "reflector": "B",
+            "ring_settings": [1, 20, 11],
+            "offsets": [1, 11, 0],
+            "plugs": ["AV", "BS", "CG", "DL", "FU", "HZ", "IN", "KM", "OW", "RX"],
+            "cipher": "EDPUD NRGYS ZRCXN UYTPO MRMBO FKTBZ REZKM LXLVE FGUEY SIOZV EQMIK UBPMM YLKLT TDEIS MDICA GYKUA CTCDO MOHWX MUUIA UBSTS LRNBZ SZWNR FXWFY SSXJZ VIJHI DISHP RKLKA YUPAD TXQSP INQMA TLPIF SVKDA SCTAC DPBOP VHJK",
+            "message": "AUFKL XABTE ILUNG XVONX KURTI NOWAX KURTI NOWAX NORDW ESTLX SEBEZ XSEBE ZXUAF FLIEG ERSTR ASZER IQTUN GXDUB ROWKI XDUBR OWKIX OPOTS CHKAX OPOTS CHKAX UMXEI NSAQT DREIN ULLXU HRANG ETRET ENXAN GRIFF XINFX RGTX",
+            "note": "Operation Barbarossa A, 1941"
+        },
+        {
+            "rotors": ["II", "IV", "V"],
+            "reflector": "B",
+            "ring_settings": [1, 20, 11],
+            "offsets": [11, 18, 3],
+            "plugs": ["AV", "BS", "CG", "DL", "FU", "HZ", "IN", "KM", "OW", "RX"],
+            "cipher": "SFBWD NJUSE GQOBH KRTAR EEZMW KPPRB XOHDR OEQGB BGTQV PGVKB VVGBI MHUSZ YDAJQ IROAX SSSNR EHYGG RPISE ZBOVM QIEMM ZCYSG QDGRE RVBIL EKXYQ IRGIR QNRDN VRXCY YTNJR",
+            "message": "DREIG EHTLA NGSAM ABERS IQERV ORWAE RTSXE INSSI EBENN ULLSE QSXUH RXROE MXEIN SXINF RGTXD REIXA UFFLI EGERS TRASZ EMITA NFANG XEINS SEQSX KMXKM XOSTW XKAME NECXK",
+            "note": "Operation Barbarossa B, 1941"
+        },
+        {
+            "rotors": ["III", "VI", "VIII"],
+            "reflector": "B",
+            "ring_settings": [0, 7, 12],
+            "offsets": [20, 25, 21],
+            "plugs": ["AN", "EZ", "HK", "IJ", "LR", "MQ", "OT", "PV", "SW", "UX"],
+            "cipher": "YKAEN ZAPMS CHZBF OCUVM RMDPY COFHA DZIZM EFXTH FLOLP ZLFGG BOTGO XGRET DWTJI QHLMX VJWKZ UASTR",
+            "message": "STEUE REJTA NAFJO RDJAN STAND ORTQU AAACC CVIER NEUNN EUNZW OFAHR TZWON ULSMX XSCHA RNHOR STHCO",
+            "note": "Scharnhorst (Konteradmiral Erich Bey), 1943"
+        }
+    ]
+}

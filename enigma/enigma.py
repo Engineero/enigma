@@ -17,6 +17,7 @@ import argparse
 class Wheel:
     """Defines a cipher wheel for the enigma machine."""
 
+    # Define wheel constants. Note I'm zero-indexing the alphabet for notches.
     WHEELS = {'I': 'EKMFLGDQVZNTOWYHXUSPAIBRCJ',
               'II': 'AJDKSIRUXBLHWTMCQGZNPYFVOE',
               'III': 'BDFHJLCPRTXVZNYEIWGAKMUSQO',
@@ -25,16 +26,18 @@ class Wheel:
               'VI': 'JPGVOUMFYQBENHZRDKASXLICTW',
               'VII': 'NZJHGRCXMYSWBOUFAIVLPEKQDT',
               'VIII': 'FKQHTLXOCBJSPDZRAMEWNIUYGV'}
-    NOTCHES = {'I': [16],
-               'II': [21],
-               'III': [4],
-               'IV': [9],
-               'V': [25],
-               'VI': [12, 25],
-               'VII': [12, 25],
-               'VIII': [12, 25]}
+    NOTCHES = {'I': [16],  # Q
+               'II': [4],  # E
+               'III': [21],  # V
+               'IV': [9],  # J
+               'V': [25],  # Z
+               'VI': [12, 25],  # M, Z
+               'VII': [12, 25],  # M, Z
+               'VIII': [12, 25]}  # M, Z
 
     def __init__(self, wheel_key, ring_setting=0, offset=0):
+        if wheel_key not in self.WHEELS.keys():
+            raise KeyError(f'Wheel "{wheel_key}" not found.')
         self.wheel_key = wheel_key
         self.output = self.WHEELS[wheel_key]
         self.notch = self.NOTCHES[wheel_key]
@@ -52,7 +55,7 @@ class Wheel:
         shift_next = False
         if rotate:
             self.shift_wheel()
-            if self.offset in self.notch:
+            if self.offset - 1 in self.notch:
                 shift_next = True
             if self.offset > 25:
                 self.offset = 0  # reset at Z
@@ -89,12 +92,19 @@ class Enigma:
     """Defines the enigma machine."""
 
     # Define constants for the machine.
+    REFLECTORS = {'A': 'EJMZALYXVBWFCRQUONTSPIKHGD',
+                  'B': 'YRUHQSLDPXNGOKMIEBFZCWVJAT',
+                  'C': 'FVPJIAOYEDRZXWGCTKUQSBNMHL',
+                  'B_thin': 'ENKQAUYWJICOPBLMDXZVFTHRGS',
+                  'C_thin': 'RDOBJNTKVEHMLFCWZAXGYIPSUQ'}
 
-    def __init__(self, wheels, ring_settings, patch_list, offsets=None):
+    def __init__(self, wheels, ring_settings, patch_list, reflector='A',
+                 offsets=None):
         """Initializes the machine."""
 
         self.wheel_choices = wheels
         self.ring_settings = ring_settings
+        self.reflector_setting = reflector
         self.init_patch_board(patch_list)
         self.init_reflector()
         if offsets is None:
@@ -191,12 +201,11 @@ class Enigma:
         decrypt it's own messages.
         """
 
-        # TODO (NLT): set up a reflector based on real Enigma machines.
-        reflector_a = 'ABCDEFGHIJKLM'
-        reflector_b = 'NOPQRSTUVWXYZ'
-        refl_a_final = reflector_a.upper() + reflector_b.upper()
-        refl_b_final = reflector_b.upper() + reflector_a.upper()
-        self.reflector = {a: b for a, b in zip(refl_a_final, refl_b_final)}
+        if self.reflector_setting not in self.REFLECTORS.keys():
+            raise KeyError(f'Reflector key "{self.reflector_setting}" not found.')
+        keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        vals = self.REFLECTORS[self.reflector_setting]
+        self.reflector = {a: b for a, b in zip(keys, vals)}
 
 
 if __name__ == '__main__':

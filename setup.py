@@ -42,6 +42,7 @@ CLASSIFIERS = ['Development Status :: 4 - Beta',
 PROJECT_URLS = {'Documentation': 'https://github.com/Engineero/enigma',
                 'Source': 'https://github.com/Engineero/enigma',
                 'Tracker': 'https://github.com/Engineero/enigma/issues'}
+INSTALL_REQUIRES = ['numpy', 'tqdm', 'argparse']
 
 setup(name='enigma',
       packages=['enigma'],
@@ -53,7 +54,8 @@ setup(name='enigma',
       author_email='engineerolabs@gmail.com',
       url='https://github.com/Engineero/enigma',
       project_urls=PROJECT_URLS,
-      classifiers=CLASSIFIERS)
+      classifiers=CLASSIFIERS,
+      install_requires=INSTALL_REQUIRES)
 
 
 
