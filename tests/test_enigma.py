@@ -68,8 +68,8 @@ class TestEnigma(unittest.TestCase):
         """Tests known cipher/message pairs encrypted with WWII Enigmas."""
 
         print('\nTesting known historical vectors...')
-        path = Path(__file__).parent.absolute() / 'test_vectors.json'
-        with open(path, 'r') as fp:
+        json_path = Path(__file__).parent.absolute() / 'test_vectors.json'
+        with open(json_path, 'r') as fp:
             data = json.load(fp)
         for vector in data['vectors']:
             enigma = Enigma(
